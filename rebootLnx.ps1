@@ -1,7 +1,6 @@
 ﻿# Log
 #Start-Transcript -Path ((Get-Item $myInvocation.MyCommand.Definition).DirectoryName+"\"+(Get-Item $myInvocation.MyCommand.Definition).BaseName+".log") -Append
-#echo $MyInvocation
-
+echo $myInvocation.MyCommand.Definition
 
 # Get the ID and security principal of the current user account
 $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
@@ -51,7 +50,21 @@ Function pause ($message)
     }
 }
 
-#echo ((Get-Item $myInvocation.MyCommand.Path).DirectoryName+"\"+(Get-Item $myInvocation.MyCommand.Path).BaseName+"Log.txt")
+#Create a shortcut
+if (Test-Path $env:USERPROFILE"\Desktop\Restart on Linux.lnk"){
+
+} 
+else {
+    $ShortcutPath = $env:USERPROFILE+"\Desktop\Restart on Linux.lnk"
+    $TargetPath = $myInvocation.MyCommand.Definition
+    $WshShell = New-Object -ComObject WScript.Shell 
+    $Shortcut = $WshShell.CreateShortcut($ShortcutPath) 
+    $Shortcut.TargetPath = $TargetPath
+    $Shortcut.IconLocation = $env:SYSTEMROOT+"\System32\SHELL32.dll,160"
+    $Shortcut.Save()
+}
+
+#echo ((Get-Item $myInvocation.MyCommand.Definition).DirectoryName+"\"+(Get-Item $myInvocation.MyCommand.Definition).BaseName+"Log.txt")
 
 ##BE SURE to have no sudo pwd on wsl:           wsl.exe /bin/bash -c "echo '${USER} ALL=(ALL) NOPASSWD: ALL' | sudo EDITOR='tee -a' visudo --quiet"
 
